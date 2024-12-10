@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html
+    lang="en"
+    xmlns:th="http://thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    xmlns:sec="http://www.thymeleaf.org">
+<head th:replace="fragments/head.html :: head" />
+<body>
+    <nav th:replace="fragments/layout :: header"></nav>
+
+    <main layout:insert="fragments/layout :: content">
+        <input id="search" name="search" placeholder="Search by title or tags (without '#')...">
+
+        <div>
+            <p>Specialization</p>
+            <div>
+                <button>
+                    All
+                </button>
+                <button>
+                    Mata
+                </button>
+                <button>
+                    THT
+                </button>
+            </div>
+        </div>
+
+        <div>
+            <p>Doctors</p>
+            <div>
+                <div>
+                    No doctor found.
+                </div>
+            </div>
+        </div>
+
+        <div>
+             <div>
+                No one write consultation yet.
+             </div>
+        </div>
+    </main>
+</body>
+</html>

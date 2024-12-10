@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org">
+
+<head th:replace="fragments/head.html :: head" />
+
+<body>
+    <nav th:replace="fragments/layout :: header"></nav>
+
+    <form method="post">
+        <a href="/">
+            Back
+        </a>
+
+        <div>
+            <label>Title</label>
+            <input name="title" placeholder="Input title">
+        </div>
+
+        <div>
+            <label>Specialization</label>
+            <select name="specialization">
+                <option value="">Choose specialization...</option>
+            </select>
+        </div>
+
+        <div>
+            <label>
+                Consult To (Optional)
+            </label>
+            <select name="consult_to">
+                <option value="">Choose doctor...</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Tags</label>
+            <input name="tags" placeholder="Input tags (ex: tag1,tag2)">
+        </div>
+
+        <div>
+            <label>Content</label>
+            <textarea rows="12" name="content" placeholder="Input content here..."></textarea>
+        </div>
+
+        <div>
+            <a href="/">Cancel</a>
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org">
+
+<head th:replace="fragments/head.html :: head" />
+
+<body>
+    <nav th:replace="fragments/layout :: header"></nav>
+
+    <form method="post">
+        <div>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Name">
+        </div>
+
+        <div>
+            <label for="username">Username</label>
+            <input name="username" placeholder="Username">
+        </div>
+
+        <div>
+            <label for="password">Password</label>
+            <input name="password" type="password"
+                placeholder="****************">
+        </div>
+
+        <div>
+            <label for="role">Type</label>
+            <input id="role" type="hidden" name="role">
+            <button type="button">Patient</button>
+            <button type="button">Doctor</button>
+        </div>
+
+        <div id="patientField">
+            <div>
+                <label for="age">Age</label>
+                <input id="age" name="age" type="number" placeholder="Input Age">
+            </div>
+
+            <div>
+                <label for="dob">Date of Birth</label>
+                <input type="date" id="dob" name="dob" placeholder="Date of Birth">
+            </div>
+
+            <div>
+                <label for="gender">Gender</label>
+                <select id="gender" name="gender">
+                    <option value="">Choose gender...</option>
+                    <option value="pria">Pria</option>
+                    <option value="wanita">Wanita</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="doctorField">
+            <div>
+                <label for="medicalLicenseId">Medical License ID</label>
+                <input id="medicalLicenseId" name="medicalLicenseId" placeholder="Medical License ID">
+            </div>
+
+            <div>
+                <label for="specialization">Specialization</label>
+                <select id="specialization" name="specialization">
+                    <option value="">Choose specialization...</option>
+                </select>
+            </div>
+        </div>
+
+        <div>
+            <a href="/">Cancel</a>
+            <button type="submit">Register</button>
+        </div>
+    </form>
+</body>
+</html>
