@@ -3,61 +3,113 @@
 
 <head th:replace="fragments/head.html :: head" />
 
-<body>
+<body class="text-gray-900">
     <nav th:replace="fragments/layout :: header"></nav>
 
-    <div>
-        <div>
-            <a href="/">Back</a>
-            <div>
-                <img src="https://avataaars.io/?avatarStyle=Circle&topType=LongHairStraight&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Ligh" width="30" height="30" />
-                <a>Pasien1</a>
+    <div class="container max-w-xl mx-auto my-4 overflow-y-auto px-4" style="max-height: 80vh;">
+        <div class="pb-4 border-b border-gray-300">
+            <a href="/" class="text-3xl mb-2 block text-gray-500">
+                <i class="bi-arrow-left"></i>
+            </a>
+            <div class="flex items-center mb-4">
+                <img class="rounded-full mr-2"
+                    src="https://avataaars.io/?avatarStyle=Circle&topType=LongHairStraight&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Ligh"
+                    width="30" height="30" />
+                <a th:text="${consultation.patient.user.name}" th:href="'/patients/' + ${consultation.patient.id}" class="text-xs" />
             </div>
             
-            <div>
-                <h4>Title</h4>
+            <div class="flex items-center mb-4">
+                <h4 th:text="${consultation.title}" class="text-2xl font-bold m-0" />
+                <p th:if="${consultation.isResolved}" class="m-0 py-1 px-2 bg-green-200 text-green-500 rounded-full font-bold text-xs ml-2">Resolved</p>
             </div>
             
-            <p>Content</p>
+            <p th:text="${consultation.content}" class="text-gray-500 text-justify mb-4" />
             
-            <p>Specialization</p>
-            <div>
-                ...
+            <p class="font-bold mb-2">Specialization</p>
+            <div class="flex items-center mb-4 flex-wrap">
+                <div th:text="${consultation.specialization.name}" class="rounded-full border border-gray-900 w-auto px-2 py-1 inline-block text-center text-sm mr-2"
+                    style="min-width: 62px;" />
             </div>
             
-            <p>Tags</p>
-            <div>
-                ...
+            <p class="font-bold mb-2">Tags</p>
+            <div class="flex items-center mb-4 flex-wrap">
+                <div th:each="tag: ${consultation.tags}" th:text="${'#' + tag.name}" class="text-sm mr-2" style="min-width: 32px;" />
             </div>
         </div>
 
-        <form method="post">
-            <div>
-                <label>Submit Response</label>
-                <textarea rows="6" name="content" placeholder="Input content here..."></textarea>
+        <form th:action="${'/consultations/' + consultation.id + '/response'}" method="post" sec:authorize="isAuthenticated()" class="pb-8 border-b border-gray-300 pt-8">
+            <div class="mb-2">
+                <label class="text-lg font-bold mb-2 block">Submit Response</label>
+                <textarea class="px-4 py-2 border border-gray-300 rounded text-sm w-full" rows="6" name="content"
+                    placeholder="Input content here..." th:field="*{response.content}" th:value="${response.content}"></textarea>
             </div>
 
-            <div>
-                <div>
+            <div class="flex items-center justify-end">
+                <div th:if="${!consultation.isResolved && authenticatedUser != null && authenticatedDoctor != null}">
                     <input
+                        th:disabled="${consultation.isResolved || consultation.consult_to != null && consultation.consult_to.user.id == authenticatedUser.id || authenticatedDoctor.specialization.name != consultation.specialization.name}"
                         type="checkbox"
+                        th:checked="${consultation.consult_to != null && consultation.consult_to.id == authenticatedDoctor.id}"
                         name="isAnswered"
+                        th:field="*{response.isAnswered}"
+                        th:value="*{response.isAnswered}"
                         id="isAnswerCheckbox"
                     >
-                    <label for="isAnswer">
+                    <label for="isAnswer" class="flex flex-col">
                         <span>Submit as an Answer</span>
+                        <span th:if="${consultation.consult_to == null || consultation.consult_to.user.id != authenticatedUser.id}" class="text-red-500 inline text-xs">
+                            (You can only submit as an answer
+                            <br>
+                            if you are on this specialization
+                            <br>
+                            or this patient consult to you.)
+                        </span>
+                        <span th:if="${consultation.consult_to != null && consultation.consult_to.user.id == authenticatedUser.id}" class="text-green-500 inline text-xs">
+                            (This patient directly consult to you
+                            <br>
+                            your response will be marked as
+                            <br>
+                            verified answer as default.)
+                        </span>
                     </label>
                 </div>
-                <button type="submit">Submit</button>
+                <button type="submit"
+                    class="border border-gray-900 bg-gray-900 text-white rounded text-sm px-3 py-2 ml-3">Submit</button>
             </div>
         </form>
 
-        <div>
-            <p>Responses</p>
+        <div class="pt-8">
+            <p class="font-bold mb-4">Responses</p>
 
             <div>
-                <div>
+                <div th:if="${consultation.responses.empty}" class="text-center italic text-sm text-gray-700 mt-8">
                     No response yet.
+                </div>
+                <div th:each="response: ${consultation.responses}" class="py-4 border-b border-gray-300">
+                    <div th:if="${response.isAnswered}" class="inline-flex items-center text-white py-1 px-2 rounded-full bg-green-600 w-auto text-xs mb-2">
+                        <i class="bi-check-circle mr-2"></i>
+                        <span>
+                            Verified Answer
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center">
+                            <img class="rounded-full mr-2"
+                                src="https://avataaars.io/?avatarStyle=Circle&topType=LongHairStraight&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Ligh"
+                                width="30" height="30" />
+                            <div>
+                                <a th:href="${response.isDoctor ? '/doctors/' + response.doctorRef.id : '#'}" class="text-xs block">
+                                    <span th:if="${response.isDoctor}">Dr. </span>
+                                    <span th:text="${response.user.name}" />
+                                    <span th:if="consultation.patient.user.id == response.user.id" class="text-red-700">(Creator)</span>
+                                </a>
+                                <p th:if="${response.isDoctor}" th:text="${'Spesialis ' + response.doctorRef.specialization.name}" class="text-xs text-gray-500"></p>
+                            </div>
+                        </div>
+
+                        <p th:text="${#temporals.format(response.createdAt, 'dd MMMM YYYY HH:mm')}" class="text-xs text-gray-500 text-right" />
+                    </div>
+                    <p th:text="${response.content}" class="text-justify text-gray-500" />
                 </div>
             </div>
         </div>

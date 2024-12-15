@@ -3,49 +3,78 @@
 
 <head th:replace="fragments/head.html :: head" />
 
-<body>
+<body class="text-gray-900">
     <nav th:replace="fragments/layout :: header"></nav>
 
-    <form method="post">
-        <a href="/">
-            Back
+    <div sec:authorize="hasAuthority('doctor')" class="p-3 bg-red-200 text-red-500 font-bold">
+        <p class="m-0 text-center">Doctor cannot post a consultation, please use patient account</p>
+    </div>
+
+    <div sec:authorize="hasAuthority('doctor')" class="container max-w-xl mx-auto my-4 overflow-y-auto px-4" style="max-height: 80vh;">
+        <a th:href="@{/logout}"
+            class="block text-center w-full border border-gray-900 bg-gray-900 text-white rounded px-3 py-2 ml-3">Logout</a>
+    </div>
+
+    <form sec:authorize="hasAuthority('patient')" th:action="@{/consultations}" method="post" class="container max-w-xl mx-auto my-4 overflow-y-auto px-4" style="max-height: 80vh;">
+        <a href="/" class="text-3xl mb-2 block text-gray-500">
+            <i class="bi-arrow-left"></i>
         </a>
 
-        <div>
-            <label>Title</label>
-            <input name="title" placeholder="Input title">
+        <div class="mb-4">
+            <label class="text-lg font-bold mb-2 block">Title</label>
+            <input class="px-4 py-2 border border-gray-300 rounded text-sm w-full" th:field="*{consultation.title}" name="title" placeholder="Input title">
         </div>
 
-        <div>
-            <label>Specialization</label>
-            <select name="specialization">
+        <div class="mb-4">
+            <label class="text-lg font-bold mb-2 block">Specialization</label>
+            <select class="px-4 py-2 border border-gray-300 rounded text-sm w-full" name="specialization" th:object="${consultation}" th:field="*{specialization}">
                 <option value="">Choose specialization...</option>
+                <option th:id="${'sp_opt-' + specialization.id}" th:each="specialization: ${specializations}" th:value="${specialization.id}" th:text="${specialization.name}" th:selected="${param.specializationId == specialization.id}"></option>
             </select>
         </div>
 
-        <div>
-            <label>
-                Consult To (Optional)
+        <div id="consultToWrapper" class="mb-4 hidden">
+            <label class="text-lg font-bold mb-2 block">
+                Consult To
+                <span class="text-sm text-gray-500 font-normal">(Optional)</span>
             </label>
-            <select name="consult_to">
+            <select class="px-4 py-2 border border-gray-300 rounded text-sm w-full" name="consult_to" th:object="${consultation}" th:field="*{consult_to}">
                 <option value="">Choose doctor...</option>
+                <option th:id="${'d_opt-' + doctor.id}" th:each="doctor: ${doctors}" th:value="${doctor.id}" th:text="${doctor.user.name}" th:selected="${param.doctorId == doctor.id}"></option>
             </select>
         </div>
 
-        <div>
-            <label>Tags</label>
-            <input name="tags" placeholder="Input tags (ex: tag1,tag2)">
+        <div class="mb-4">
+            <label class="text-lg font-bold mb-2 block">Tags</label>
+            <input class="px-4 py-2 border border-gray-300 rounded text-sm w-full" name="tags" placeholder="Input tags (ex: tag1,tag2)" th:value="${tags.name}" th:field="*{tags.name}">
         </div>
 
-        <div>
-            <label>Content</label>
-            <textarea rows="12" name="content" placeholder="Input content here..."></textarea>
+        <div class="mb-4">
+            <label class="text-lg font-bold mb-2 block">Content</label>
+            <textarea class="px-4 py-2 border border-gray-300 rounded text-sm w-full" rows="12" name="content" placeholder="Input content here..." th:field="*{consultation.content}"></textarea>
         </div>
 
-        <div>
-            <a href="/">Cancel</a>
-            <button type="submit">Submit</button>
+        <div class="flex items-center mt-8">
+            <a href="/" class="w-full block text-center border border-gray-900 rounded px-3 py-2">Cancel</a>
+            <button type="submit" class="w-full border border-gray-900 bg-gray-900 text-white rounded px-3 py-2 ml-3">Submit</button>
         </div>
     </form>
 </body>
+<script>
+    window.onload = function () {
+        var doctorId = new URLSearchParams(window.location.search).get('doctorId');
+        var specializationId = new URLSearchParams(window.location.search).get('specializationId');
+        var consultToWrapper = document.getElementById('consultToWrapper');
+        var consultToField = document.querySelector('select[name="consult_to"]');
+        var specializationField = document.querySelector('select[name="specialization"]');
+
+        if (doctorId && specializationId) {
+            consultToWrapper.classList.remove('hidden');
+            consultToField.value = doctorId;
+
+            document.getElementById('d_opt-' + doctorId).selected = true;
+            document.getElementById('sp_opt-' + specializationId).selected = true;
+        }
+    }
+</script>
 </html>

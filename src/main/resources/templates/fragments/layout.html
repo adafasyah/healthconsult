@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org">
 <head th:replace="head :: head" />
-<body>
-    <nav th:fragment="header">
-        <div>
-            <a href="/">Health Consultation</a>
-            <ul>
-                <li>
-                    <a href="/consultations/new">Consult</a>
+<body class="text-gray-900">
+    <nav th:fragment="header" class="p-8 bg-white border border-bottom border-gray-300">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="/" class="text-2xl m-0 font-bold">Health Consultation</a>
+            <ul class="flex">
+                <li class="ml-8">
+                    <a href="/consultations/new" class="">
+                        <i class="bi-pencil-square"></i>
+                        <span>
+                            Consult
+                        </span>
+                    </a>
                 </li>
-                <li>
-                    <a href="/login">Login</a>
+                <li sec:authorize="!isAuthenticated()" class="ml-8">
+                    <a href="/login" class="">Login</a>
                 </li>
-                <li>
-                    <a href="/register">Register</a>
+                <li sec:authorize="!isAuthenticated()" class="ml-8">
+                    <a href="/register" class="">Register</a>
                 </li>
-                <li>
-                    <a href="/logout">Logout</a>
+                <li sec:authorize="isAuthenticated()" class="ml-8">
+                    <a th:href="@{/logout}" class="">Logout</a>
                 </li>
             </ul>
         </div>
